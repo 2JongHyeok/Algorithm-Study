@@ -1,25 +1,32 @@
-#include <iostream>
-int arr[1000001] = { 0 };
+	#include <iostream>
+	#include <vector>
+	#include <algorithm>
+	#include <cmath>
 
-int main()
-{
-	std::ios::sync_with_stdio(false); std::cin.tie(NULL); std::cout.tie(NULL);
-	arr[1] = 1;
-	for (int i = 2; i < 1000; i++)
+	using namespace std;
+	int main()
 	{
-		for (int j = i * i; j < 1000001; j += i)
-		{
-			if (arr[j] != 0)
-				continue;
-			arr[j] = 1;
+		std::ios::sync_with_stdio(false);
+		std::cin.tie(NULL); 
+		std::cout.tie(NULL);
+		vector<int> v;
+		int N;
+		cin >> N;
+		if (N == 0) {
+			cout << "0";
+		}
+		else {
+			for (int i = 0; i < N; ++i) {
+				int a;
+				cin >> a;
+				v.emplace_back(a);
+			}
+			std::sort(v.begin(), v.end());
+			int erase_size = std::lround(N * 0.15);
+			int sum = 0;
+			for (int i = erase_size; i < N - erase_size; ++i) {
+				sum += v[i];
+			}
+			cout << std::lround(float(sum) / (N - (erase_size * 2)));
 		}
 	}
-	int N, M;
-	std::cin >> M >> N;
-	for (int i = M; i <= N; i++)
-	{
-		if (arr[i] == 0)
-			std::cout << i << "\n";
-	}
-
-}
