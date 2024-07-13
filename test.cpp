@@ -1,6 +1,6 @@
 #include <iostream>
-#include <queue>
-#include <array>
+#include <stack>
+#include <string>
 
 using namespace std;
 
@@ -9,34 +9,44 @@ int main()
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	int K, N;
-	cin >> K >> N;
-	vector<int>v;
-	v.reserve(K);
-	int length = 0;
-	int min=1; 
-	unsigned int max = 0x7FFFFFFF;
-	for (int i = 0; i < K; ++i) {
+	int N;
+	cin >> N;
+	stack<int>s;
+	s.push(1);
+	string str = "+";
+	bool NO = false;
+	int numbers = 2;
+	for (int i = 1; i <= N; ++i) {
 		int num;
 		cin >> num;
-		v.emplace_back(num);
+		if (s.empty()) {
+			if (num >= numbers) {
+				s.push(numbers++);
+				str += "+";
+			}
+		}
+		if (num > s.top()) {
+			while (num > s.top()) {
+				s.push(numbers++);
+				str += "+";
+			}
+			str += "-";
+			s.pop();
+		}
+		else if (num == s.top()) {
+			str += "-";
+			s.pop();
+		}
+		else {
+			NO = true;
+		}
 	}
-	unsigned int mid;
-	while (true) {
-		mid = (max +min)/2;
-		int sum = 0;
-		for (int a : v) {
-			sum += (a / mid);
-		}
-		if (sum < N) {
-			max = mid-1;
-		}
-		else if (sum >= N) {
-			min = mid+1;
-		}
-		if (min > max)
-			break;
+	if (NO) {
+		cout << "NO";
 	}
-	
-	cout << max;
+	else {
+		for (char c : str) {
+			cout << c << "\n";
+		}
+	}
 }
