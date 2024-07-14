@@ -1,5 +1,5 @@
 #include <iostream>
-#include <stack>
+#include <unordered_map>
 #include <string>
 
 using namespace std;
@@ -9,44 +9,27 @@ int main()
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	int N;
-	cin >> N;
-	stack<int>s;
-	s.push(1);
-	string str = "+";
-	bool NO = false;
-	int numbers = 2;
-	for (int i = 1; i <= N; ++i) {
-		int num;
-		cin >> num;
-		if (s.empty()) {
-			if (num >= numbers) {
-				s.push(numbers++);
-				str += "+";
-			}
-		}
-		if (num > s.top()) {
-			while (num > s.top()) {
-				s.push(numbers++);
-				str += "+";
-			}
-			str += "-";
-			s.pop();
-		}
-		else if (num == s.top()) {
-			str += "-";
-			s.pop();
+	int M,N;
+	cin >> M>>N;
+	unordered_map<string, int> m;
+	unordered_map<int,string> m2;
+
+	for (int i = 1; i <= M; ++i) {
+		string s;
+		cin >> s;
+		m[s]=i;
+		m2[i] = s;
+	}
+	for (int i = 0; i < N; ++i) {
+		string s;
+		int a;
+		cin >> s;
+		if (s[0] >= 'A') {
+			cout << m[s]<<"\n";
 		}
 		else {
-			NO = true;
-		}
-	}
-	if (NO) {
-		cout << "NO";
-	}
-	else {
-		for (char c : str) {
-			cout << c << "\n";
+			a = stoi(s);
+			cout << m2[a] << "\n";
 		}
 	}
 }
