@@ -1,5 +1,8 @@
 #include <iostream>
 #include <string>
+#include <unordered_map>
+#include <algorithm>
+#include <vector>
 
 using namespace std;
 
@@ -8,41 +11,26 @@ int main()
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	int M;
-	cin >> M;
-	int result = 0;
+	int N, M;
+	cin >>N>> M;
+	int num = 0;
+	unordered_map<string, int> um;
+	vector<string> v;
 	string s;
-	int a;
+	for (int i = 0; i < N; ++i) {
+		cin >> s;
+		um[s] = 1;
+	}
 	for (int i = 0; i < M; ++i) {
 		cin >> s;
-		if (s == "add") {
-			cin >> a;
-			result |= (1 << a);
+		if (um[s] != 0) {
+			v.emplace_back(s);
+			num++;
 		}
-		else if (s == "remove") {
-			cin >> a;
-			result &= ~(1 << a);
-		}
-		else if (s == "check") {
-			cin >> a;
-			if (result & (1 << a)) {
-				cout << "1\n";
-			}
-			else {
-				cout << "0\n";
-			}
-		}
-		else if (s == "toggle") {
-			cin >> a;
-			result ^= (1 << a);
-		}
-		else if (s == "all") {
-			result = (1 << 21) - 1;
-		}
-		else if (s == "empty") {
-			result = 0;
-		}
-
 	}
-	
+	sort(v.begin(), v.end());
+	cout << num << "\n";
+	for (string st : v) {
+		cout << st << "\n";
+	}
 }
