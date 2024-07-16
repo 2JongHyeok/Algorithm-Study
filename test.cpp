@@ -11,26 +11,22 @@ int main()
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	int N, M;
-	cin >>N>> M;
-	int num = 0;
-	unordered_map<string, int> um;
-	vector<string> v;
-	string s;
+	int N , K;
+	cin >> N >> K;
+	vector<int> v;
+	int money;
 	for (int i = 0; i < N; ++i) {
-		cin >> s;
-		um[s] = 1;
+		cin >> money;
+		v.emplace_back(money);
 	}
-	for (int i = 0; i < M; ++i) {
-		cin >> s;
-		if (um[s] != 0) {
-			v.emplace_back(s);
-			num++;
+	int count = 0;
+	for (int i = v.size() - 1; i >= 0; --i) {
+		if (K / v[i] > 0) {
+			count += K / v[i];
+			K %= v[i];
 		}
+		
 	}
-	sort(v.begin(), v.end());
-	cout << num << "\n";
-	for (string st : v) {
-		cout << st << "\n";
-	}
+
+	cout << count;
 }
