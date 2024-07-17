@@ -1,6 +1,4 @@
 #include <iostream>
-#include <string>
-#include <unordered_map>
 #include <algorithm>
 #include <vector>
 
@@ -11,22 +9,20 @@ int main()
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	int N , K;
-	cin >> N >> K;
-	vector<int> v;
-	int money;
+	int N;
+	cin >> N;
+	vector<int>v;
+	int num;
 	for (int i = 0; i < N; ++i) {
-		cin >> money;
-		v.emplace_back(money);
+		cin >> num;
+		v.emplace_back(num);
 	}
-	int count = 0;
-	for (int i = v.size() - 1; i >= 0; --i) {
-		if (K / v[i] > 0) {
-			count += K / v[i];
-			K %= v[i];
-		}
-		
+	sort(v.begin(), v.end());
+	int sum=0;
+	int result=0;
+	for (int a : v) {
+		sum += a;
+		result += sum;
 	}
-
-	cout << count;
+	cout << result;
 }
