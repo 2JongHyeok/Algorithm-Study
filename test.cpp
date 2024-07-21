@@ -11,16 +11,18 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	int N;
-	int sum = 0;
 	cin >> N;
-	for (int i = 2; i <= N; ++i) {
-		arr[i] = arr[i - 1] + 1;
-		if (i % 2 == 0) {
-			arr[i] = min(arr[i], arr[i / 2] + 1);
-		}
-		if (i % 3 == 0) {
-			arr[i] = min(arr[i], arr[i / 3] + 1);
-		}
+	int* arr = new int[N];
+	for (int i = 0; i < N; ++i) {
+		cin >> arr[i];
 	}
-	cout << arr[N];	
+	int results[300]{ 0 };
+	results[0] = arr[0];
+	results[1] = arr[0] + arr[1];
+	results[2] = max(arr[0] + arr[2], arr[1] + arr[2]);
+	for (int i = 3; i < N; ++i) {
+		results[i] = max(results[i - 2] + arr[i], arr[i - 1]+ arr[i] + results[i - 3]);
+	}
+	cout << results[N - 1];
+	
 }
