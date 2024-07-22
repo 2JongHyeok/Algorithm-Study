@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cmath>
-#include <map>
 #include <vector>
 #include <set>
 #include <stack>
@@ -16,7 +15,7 @@ int main()
 	std::cout.tie(NULL);
 	int C,P;
 	cin >> C >> P;
-	map<int,vector<int>> computers;
+	vector<vector<int>> computers(C+1);
 	int first, second;
 	for (int i = 0; i < P; ++i) {
 		cin >> first >> second;
