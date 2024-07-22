@@ -1,5 +1,9 @@
 #include <iostream>
 #include <cmath>
+#include <map>
+#include <vector>
+#include <set>
+#include <stack>
 
 using namespace std;
 
@@ -10,19 +14,29 @@ int main()
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	int N;
-	cin >> N;
-	int* arr = new int[N];
-	for (int i = 0; i < N; ++i) {
-		cin >> arr[i];
+	int C,P;
+	cin >> C >> P;
+	map<int,vector<int>> computers;
+	int first, second;
+	for (int i = 0; i < P; ++i) {
+		cin >> first >> second;
+		computers[first].emplace_back(second);
+		computers[second].emplace_back(first);
 	}
-	int results[300]{ 0 };
-	results[0] = arr[0];
-	results[1] = arr[0] + arr[1];
-	results[2] = max(arr[0] + arr[2], arr[1] + arr[2]);
-	for (int i = 3; i < N; ++i) {
-		results[i] = max(results[i - 2] + arr[i], arr[i - 1]+ arr[i] + results[i - 3]);
+	stack<int> s;
+	s.push(1);
+	int now;
+	set<int> result;
+	while (!s.empty()) {
+		now = s.top();
+		s.pop();
+		result.insert(now);
+		for (int i = 0; i < computers[now].size(); ++i) {
+			if (result.find(computers[now][i]) != result.end())
+				continue;
+			s.push(computers[now][i]);
+			result.insert(computers[now][i]);
+		}
 	}
-	cout << results[N - 1];
-	
+	cout << result.size()-1;
 }
