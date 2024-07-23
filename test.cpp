@@ -13,29 +13,27 @@ int main()
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	int C,P;
-	cin >> C >> P;
-	vector<vector<int>> computers(C+1);
-	int first, second;
-	for (int i = 0; i < P; ++i) {
-		cin >> first >> second;
-		computers[first].emplace_back(second);
-		computers[second].emplace_back(first);
-	}
-	stack<int> s;
-	s.push(1);
-	int now;
-	set<int> result;
-	while (!s.empty()) {
-		now = s.top();
-		s.pop();
-		result.insert(now);
-		for (int i = 0; i < computers[now].size(); ++i) {
-			if (result.find(computers[now][i]) != result.end())
-				continue;
-			s.push(computers[now][i]);
-			result.insert(computers[now][i]);
+	int N, K;
+	cin >> N >> K;
+	vector<int> v;
+	for (int i = 1; i <= N; ++i)
+		v.emplace_back(i);
+	int i = 1;
+	int num = 0;
+	cout << "<";
+	while (v.size() != 1) {
+		if (i % K == 0) {
+			cout << v[num] << ", ";
+			v.erase(v.begin() + num);
+			num--;
 		}
+
+		i++;
+		if (num >= v.size() - 1)
+			num = 0;
+		else
+			num++;
 	}
-	cout << result.size()-1;
+	cout << v[0];
+	cout << ">";
 }
