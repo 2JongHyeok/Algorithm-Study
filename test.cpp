@@ -13,27 +13,18 @@ int main()
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	int N, K;
-	cin >> N >> K;
-	vector<int> v;
-	for (int i = 1; i <= N; ++i)
-		v.emplace_back(i);
-	int i = 1;
-	int num = 0;
-	cout << "<";
-	while (v.size() != 1) {
-		if (i % K == 0) {
-			cout << v[num] << ", ";
-			v.erase(v.begin() + num);
-			num--;
-		}
-
-		i++;
-		if (num >= v.size() - 1)
-			num = 0;
-		else
-			num++;
+	int T;
+	cin >> T;
+	int dp[12];
+	dp[1] = 1;
+	dp[2] = 2;
+	dp[3] = 4;
+	for (int i = 4; i <= 11; ++i) {
+		dp[i] = dp[i - 1] + dp[i - 2] + dp[i - 3];
 	}
-	cout << v[0];
-	cout << ">";
+	int num;
+	for (int i = 0; i < T; ++i) {
+		cin >> num;
+		cout << dp[num] << "\n";
+	}
 }
