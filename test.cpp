@@ -1,8 +1,6 @@
 #include <iostream>
+#include <unordered_map>
 #include <cmath>
-#include <vector>
-#include <set>
-#include <stack>
 
 using namespace std;
 
@@ -13,18 +11,22 @@ int main()
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	int T;
+	int T, N;
 	cin >> T;
-	int dp[12];
-	dp[1] = 1;
-	dp[2] = 2;
-	dp[3] = 4;
-	for (int i = 4; i <= 11; ++i) {
-		dp[i] = dp[i - 1] + dp[i - 2] + dp[i - 3];
-	}
-	int num;
-	for (int i = 0; i < T; ++i) {
-		cin >> num;
-		cout << dp[num] << "\n";
+	string name, part;
+	unordered_map<string, int> uMap;
+	for (int test = 0; test < T; ++test) {
+		cin >> N;
+		for (int i = 0; i < N; ++i) {
+			cin >> name >> part;
+			uMap[part]++;
+		}
+		int sum = 1;
+		for (pair<string, int> p : uMap) {
+			sum *= (p.second+1);
+		}
+
+		cout << sum-1 << "\n";
+		uMap.clear();
 	}
 }
