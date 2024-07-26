@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int arr[1000001];
+long long dp[101];
 
 int main()
 {
@@ -13,20 +13,22 @@ int main()
 	std::cout.tie(NULL);
 	int T, N;
 	cin >> T;
-	string name, part;
-	unordered_map<string, int> uMap;
-	for (int test = 0; test < T; ++test) {
-		cin >> N;
-		for (int i = 0; i < N; ++i) {
-			cin >> name >> part;
-			uMap[part]++;
-		}
-		int sum = 1;
-		for (pair<string, int> p : uMap) {
-			sum *= (p.second+1);
-		}
-
-		cout << sum-1 << "\n";
-		uMap.clear();
+	dp[1] = 1;
+	dp[2] = 1;
+	dp[3] = 1;
+	dp[4] = 2;
+	dp[5] = 2;
+	dp[6] = 3;
+	dp[7] = 4;
+	dp[8] = 5;
+	dp[9] = 7;
+	dp[10] = 9;
+	for (int i = 11; i <= 100; ++i) {
+		dp[i] = dp[i - 1] + dp[i - 5];
 	}
+	for (int i = 0; i < T; ++i) {
+		cin >> N;
+		cout << dp[N] << "\n";
+	}
+
 }
