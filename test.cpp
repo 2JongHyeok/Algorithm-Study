@@ -1,25 +1,25 @@
 #include <iostream>
-#include <unordered_map>
-#include <cmath>
+#include <algorithm>
 
 using namespace std;
-long long arr[1001];
+int dp[50'001];
 
 int main()
 {
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
+
 	int N;
 	cin >> N;
-	arr[1] = 1;
-	arr[2] = 2;
-	arr[3] = 3;
-	arr[4] = 5;
-	arr[5] = 8;
-	for (int i = 6; i <= N; ++i) {
-		arr[i] = arr[i - 1]%10007 + arr[i - 2]%10007;
-		arr[i] %= 10007;
+	dp[1] = 1;
+	for (int i = 2; i <= N; ++i) {
+		int mini = 50000;
+		for(int j = 1; j * j <= i; ++j) {
+			int tmp = i - j * j;
+			mini = min(mini, dp[tmp]);
+		}
+		dp[i] = mini + 1;
 	}
-	cout << arr[N];
+	cout << dp[N];
 }
