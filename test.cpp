@@ -1,52 +1,47 @@
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
-
-int white = 0;
-int blue = 0;
-
-int paper[128][128];
-
-void one_color(int startX, int endX, int startY, int endY) {
-	int first_color = paper[startY][startX];
-	bool same = true;
-	for (int i = startY; i < endY; ++i) {
-		for (int j = startX; j < endX; ++j) {
-			if (first_color != paper[i][j]) {
-				same = false;
-				break;
-			}
-		}
-		if (!same) break;
-	}
-	if (!same) {
-		one_color(startX, (startX+endX)/2, startY,(startY+endY)/2);
-		one_color((startX + endX) / 2, endX, startY, (startY + endY) / 2);
-		one_color(startX, (startX + endX) / 2, (startY + endY) / 2, endY);
-		one_color((startX + endX) / 2, endX, (startY + endY) / 2, endY);
-	}
-	else {
-		if (first_color == 1) {
-			blue++;
-		}
-		else
-			white++;
-	}
-}
 
 int main()
 {
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	int N;
-	cin >> N;
+	
+	int N, M;
+	cin >> N >> M;
+	vector<int> trees(N);
 	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) {
-			cin >> paper[i][j];
+		cin >> trees[i];
+	}
+	
+	sort(trees.begin(), trees.end(), greater<int>());
+
+	long long  result = trees[0];
+	long long before = 0;
+	long long cut = (result + before) / 2;
+	bool before_cut = false;
+
+	while (true) {
+		if (before > result)
+			break;
+		long long sum = 0;
+		for (int i = 0; i < N; ++i) {
+			if (trees[i] <= cut)
+				break;
+			sum += trees[i] - cut;
+			if (sum>= M) {
+				before = cut+1;
+				cut = (result+before)/2;
+				break;
+			}
+		}
+		if (sum < M) {
+			result = cut-1;
+			cut = (result + before) / 2;
 		}
 	}
-	one_color(0, N, 0, N);
-	cout << white << "\n";
-	cout << blue;
+	cout << result;
 }
