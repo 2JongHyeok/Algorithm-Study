@@ -1,6 +1,5 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
+#include <queue>
 
 using namespace std;
 
@@ -10,38 +9,24 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	
-	int N, M;
-	cin >> N >> M;
-	vector<int> trees(N);
+	priority_queue<int> pq;
+
+	int N;
+	int num;
+	cin >> N;
 	for (int i = 0; i < N; ++i) {
-		cin >> trees[i];
-	}
-	
-	sort(trees.begin(), trees.end(), greater<int>());
-
-	long long  result = trees[0];
-	long long before = 0;
-	long long cut = (result + before) / 2;
-	bool before_cut = false;
-
-	while (true) {
-		if (before > result)
-			break;
-		long long sum = 0;
-		for (int i = 0; i < N; ++i) {
-			if (trees[i] <= cut)
-				break;
-			sum += trees[i] - cut;
-			if (sum>= M) {
-				before = cut+1;
-				cut = (result+before)/2;
-				break;
+		cin >> num;
+		if (num == 0) {
+			if (pq.empty()) {
+				cout << "0\n";
+				continue;
 			}
+			num = pq.top();
+			pq.pop();
+			cout << pq.size()<<"\n";
+			//cout << num << "\n";
 		}
-		if (sum < M) {
-			result = cut-1;
-			cut = (result + before) / 2;
-		}
+		else
+			pq.push(num);
 	}
-	cout << result;
 }
