@@ -1,7 +1,15 @@
 #include <iostream>
+#include <array>
+#include <vector>
+#include <unordered_set>
 #include <queue>
 
 using namespace std;
+
+array<vector<int>, 1001> graph;
+unordered_set<int> CC;
+
+queue<int> Component;
 
 int main()
 {
@@ -9,24 +17,33 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	
-	priority_queue<int> pq;
-
-	int N;
-	int num;
-	cin >> N;
-	for (int i = 0; i < N; ++i) {
-		cin >> num;
-		if (num == 0) {
-			if (pq.empty()) {
-				cout << "0\n";
-				continue;
-			}
-			num = pq.top();
-			pq.pop();
-			cout << pq.size()<<"\n";
-			//cout << num << "\n";
-		}
-		else
-			pq.push(num);
+	int N, M;
+	cin >> N >>M;
+	int start, end;
+	for (int i = 0; i < M; ++i) {
+		cin >> start >> end;
+		graph[start].emplace_back(end);
+		graph[end].emplace_back(start);
 	}
+	int result = 0;
+	bool first = true;
+	for (int i = 1; i <= N; ++i) {
+		if (CC.find(i) == CC.end()) {
+			result++;
+			Component.push(i);
+		}
+		else continue;
+
+		while (!Component.empty()) {
+			int num = Component.front();
+			Component.pop();
+			if (CC.find(num) != CC.end()) continue;
+			CC.insert(num);
+			for (int a : graph[num]) {
+				Component.push(a);
+			}
+		}
+	}
+	cout << result;
+	
 }
