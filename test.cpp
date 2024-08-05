@@ -1,8 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <unordered_map>
-#include <queue>
-#include <set>
 
 using namespace std;
 
@@ -12,88 +9,60 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	
-	int N, M;
-	cin >> N >> M;
-	char** arr = new char*[N];
-	unordered_map<int, vector<int>> graph;
-	for (int i = 0; i < N; ++i) {
-		arr[i] = new char[M];
-	}
-
-	int my;
-
-	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < M; ++j) {
-			cin >> arr[i][j];
-			if (arr[i][j] == 'O') {
-				if (i != 0) {
-					if (arr[i - 1][j] != 'X') {
-						graph[i * M + j].emplace_back((i - 1) * M + j);
-						graph[(i - 1) * M + j].emplace_back(i * M + j);
-					}
-				}
-				if (j != 0) {
-					if (arr[i][j-1] != 'X') {
-						graph[i * M + j].emplace_back(i * M + j-1);
-						graph[i * M + j-1].emplace_back(i * M + j);
-					}
-				}
-			}
-			else if (arr[i][j] == 'I') {
-				my = i * M + j;
-				if (i != 0) {
-					if (arr[i - 1][j] != 'X') {
-						graph[i * M + j].emplace_back((i - 1) * M + j);
-						graph[(i - 1) * M + j].emplace_back(i * M + j);
-					}
-				}
-				if (j != 0) {
-					if (arr[i][j - 1] != 'X') {
-						graph[i * M + j].emplace_back(i * M + j - 1);
-						graph[i * M + j - 1].emplace_back(i * M + j);
-					}
-				}
-			}
-			else if (arr[i][j] == 'P') {
-				if (i != 0) {
-					if (arr[i - 1][j] != 'X') {
-						graph[i * M + j].emplace_back((i - 1) * M + j);
-						graph[(i - 1) * M + j].emplace_back(i * M + j);
-					}
-				}
-				if (j != 0) {
-					if (arr[i][j - 1] != 'X') {
-						graph[i * M + j].emplace_back(i * M + j - 1);
-						graph[i * M + j - 1].emplace_back(i * M + j);
-					}
-				}
-			}
-		}
-	}
-	
-	queue<int> canGo;
-	set<int> went;
-	canGo.push(my);
-
-	int now;
+	int N;
+	vector<int> v;
+	int max = 0;
+	int num;
+	int fruits[2]{0,0};
 	int count = 0;
-
-	while (!canGo.empty()) {
-		if (went.find(canGo.front()) != went.end()) {
-			canGo.pop();
-			continue;
-		}
-		now = canGo.front();
-		canGo.pop();
-		went.insert(now);
-		for (int path : graph[now]) {
-			canGo.push(path);
-		}
-		if (arr[now / M][now % M] == 'P')
+	int continued = 0;
+	cin >> N;
+	for (int i = 0; i < N; ++i) {
+		cin >> num;
+		v.emplace_back(num);
+		if (count == 0) {
+			fruits[count] = num;
 			count++;
+			continued++;
+		}
+		else if (count == 1) {
+			if (fruits[count - 1] != num) {
+				fruits[count] = num;
+				count++;
+			}
+			continued++;
+		}
+		else {
+			if (fruits[0] == num) {
+				continued++;
+			}
+			else if (fruits[1] == num) {
+				continued++;
+			}
+			else {
+				if (max < continued) {
+					max = continued;
+				}
+				int prev = v[i - 1];
+				if (v[i - 1] == fruits[0]) {
+					fruits[1] = num;
+				}
+				else {
+					fruits[0] = num;
+				}
+				continued = 0;
+				for (int j = i-1; j >= 0; --j) {
+					if (v[j] == prev) {
+						continued++;
+					}
+					else
+						break;
+				}
+				continued++;
+			}
+		}
 	}
-	if (count > 0)
-		cout << count;
-	else
-		cout << "TT";
+	if (max < continued)
+		max = continued;
+	cout << max;
 }
