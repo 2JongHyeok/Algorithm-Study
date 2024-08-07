@@ -1,10 +1,42 @@
 #include <iostream>
-#include <queue>
 #include <vector>
-#include <set>
-#include <map>
+#include <algorithm>
 using namespace std;
 
+vector<string> Map;
+
+void BFS(int sr, int sc, int h, int w, vector<vector<int>>& D) {
+	vector<vector<pair<int,int>>> queue(2, vector<pair<int,int>>());
+	queue[0].push_back(make_pair(sr,sc));
+	int d = 0;
+	D[sr][sc] = 0;
+	int t = 0;
+	while (!queue[0].empty() or !queue[1].empty()) {
+		if (queue[t].empty()) {
+			d++;
+			t = 1 - t;
+		}
+		pair<int, int > p = queue[t].front();
+		queue[t].erase(queue[t].begin());
+		int r = p.first;
+		int c = p.second;
+		int Dr[4] = { -1,1,0,0 };
+		int Dc[4] = { 0,0,-1,1 };
+		for (int i = 0; i < 4; ++i) {
+			int nr = r + Dr[i];
+			int nc = c + Dc[i];
+			if (0 <= nr and nr < h and 0 <= nc and nc < w and Map[nr][nc] != '*' and D[nr][nc] == -1) {
+				D[nr][nc] = d;
+				if (Map[nr][nc] == '#') {
+					queue[1 - t].push_back(make_pair(nr, nc));
+				}
+				else {
+					queue[t].push_back(make_pair(nr, nc));
+				}
+			}
+		}
+	}
+}
 
 int main()
 {
@@ -12,51 +44,57 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	
-	int N, M;
-	cin >> N >> M;
-	map<int,vector<int>> v;
-	int friend1, friend2;
-	for (int i = 0; i < M; ++i) {
-		cin >> friend1 >> friend2;
-		v[friend1].emplace_back(friend2);
-		v[friend2].emplace_back(friend1);
-	}
+	int cases;
+	cin >> cases;
+	for (int i = 0; i < cases; ++i) {
+		int h, w;
+		cin >> h >> w;
+		Map.clear();
+		Map.push_back(string(w + 2, '.'));
+		for (int j = 0; j < h; ++j) {
+			string s;
+			cin >> s;
+			Map.push_back("." + s + ".");
+		}
+		Map.push_back(string(w + 2, '.'));
 
-	vector<int> kevin(N);
-	vector<set<int>> went(N, set<int>());
-	queue<int> q;
-	vector<int> person_count(N+1);
-	int now = 0;
-	int k = 0;
-	for (int i = 0; i < N; ++i) {
-		q.push(i+1);
-		k = 0;
-		person_count[0] = 1;
-		while (!q.empty()) {
-			if (person_count[k] == 0) {
-				k++;
+		int p1r = 0;
+		int p1c = 0;
+		int p2r = 0;
+		int p2c = 0;
+
+		for (int r = 1; r <= h; ++r) {
+			for (int c = 1; c <= w; ++c) {
+				if (Map[r][c] == '$') {
+					if (p1r == 0) {
+						p1r = r;
+						p1c = c;
+					}
+					else {
+						p2r = r;
+						p2c = c;
+					}
+				}
 			}
-			now = q.front();
-			q.pop();
-			person_count[k]--;
-			if (went[i].find(now) != went[i].end()) {
-				continue;
-			}
-			went[i].insert(now);
-			for (int person : v[now]) {
-				person_count[k+1] += 1;
-				q.push(person);
-			}
-			kevin[i] += k;
 		}
-	}
-	int min = 5001;
-	int answer = 0;
-	for (int i = 0; i < N; ++i ) {
-		if (min > kevin[i]) {
-			min = kevin[i];
-			answer = i+1;
+
+		vector<vector<int>> Dis0(h + 2, vector<int>(w + 2, -1));
+		vector<vector<int>> Dis1(h + 2, vector<int>(w + 2, -1));
+		vector<vector<int>> Dis2(h + 2, vector<int>(w + 2, -1));
+
+		BFS(0, 0, h + 2, w + 2, Dis0);
+		BFS(p1r, p1c, h + 2, w + 2, Dis1);
+		BFS(p2r, p2c, h + 2, w + 2, Dis2);
+
+		int answer = Dis1[0][0] + Dis2[0][0];
+		for (int r = 1; r <= h; ++r) {
+			for (int c = 1; c <= w; ++c) {
+				if (Map[r][c] == '#') {
+					answer = min(answer, Dis1[r][c] + Dis2[r][c] + Dis0[r][c] + 1);
+				}
+			}
 		}
+		cout << answer << "\n";
 	}
-	cout << answer;
+	
 }
