@@ -1,8 +1,8 @@
 #include <iostream>
-#include <queue>
-#include <set>
-using namespace std;
+#include <algorithm>
+#include <vector>
 
+using namespace std;
 
 int main()
 {
@@ -10,48 +10,34 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	
-	int N, K;
-	cin >> N >> K;
+	vector<pair<int, int>> s;
+	int N;
+	cin >> N;
+	int start, end;
+	for (int i = 0; i < N; ++i) {
+		cin >> start >> end;
+		s.emplace_back(make_pair(start, end));
+	}
 
-	queue<int> q;
-	set<int> s;
-	s.insert(N);
-	q.push(N);
-	int now;
+	std::sort(s.begin(), s.end());
+
+	int last_conf = -1;
 	int answer = 0;
-	int times[200001] = { 1 };
-
-	while (true) {
-		now = q.front();
-		q.pop();
-		if (times[answer] <= 0) {
-			answer++;
-		}
-		if (now == K)
-			break;
-		times[answer]--;
-
-		if (s.find(now * 2) == s.end()) {
-			if (now * 2 <= 200000) {
-				s.insert(now * 2);
-				q.push(now * 2);
-				times[answer + 1]++;
+	for (auto conf : s) {
+		if (conf.second <= last_conf) {
+			if (conf.second == last_conf) {
+				if (conf.first == conf.second) {
+					answer++;
+				}
 			}
+			last_conf = conf.second;
+			continue;
 		}
-		if (s.find(now +1) == s.end()) {
-			if (now + 1 <= 100000) {
-				s.insert(now + 1);
-				q.push(now + 1);
-				times[answer + 1]++;
-			}
-		}
-		if (s.find(now - 1) == s.end()) {
-			if (now - 1 >= 0) {
-				s.insert(now - 1);
-				q.push(now - 1);
-				times[answer + 1]++;
-			}
-		}
+		if (conf.first < last_conf)
+			continue;
+		answer++;
+		last_conf = conf.second;
 	}
 	cout << answer;
+
 }
