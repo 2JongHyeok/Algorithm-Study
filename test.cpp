@@ -1,72 +1,86 @@
 #include <iostream>
-#include <vector>
 #include <string>
-#include <queue>
-#include <algorithm>
+#include <vector>
 
 using namespace std;
 
-int main()
-{
-	std::ios::sync_with_stdio(false);
-	std::cin.tie(NULL);
-	std::cout.tie(NULL);
+std::vector<int> computeLPS(const std::string& pattern) {
+    int m = pattern.length();
+    vector<int> lps(m, 0);
+    int len = 0;
+    int i = 1;
 
+    while (i < m) {
+        if (pattern[i] == pattern[len]) {
+            len++;
+            lps[i] = len;
+            i++;
+        }
+        else {
+            if (len != 0) {
+                len = lps[len - 1];
+            }
+            else {
+                lps[i] = 0;
+                i++;
+            }
+        }
+    }
+    return lps;
+}
 
-	int N;
-	cin >> N;
-	vector<vector<int>> Map(N, vector<int>(N,0));
-	vector<vector<bool>> visited(N, vector<bool>(N,false));
-	for (int i = 0; i < N; ++i) {
-		string s;
-		cin >> s;
-		for (int j = 0; j < N; ++j) {
-			Map[i][j] = int(s[j] - '0');
-			if (Map[i][j] == 0) {
-				visited[i][j] = true;
-			}
-		}
-	}
+int KMPSearch(const string& text, const string& pattern) {
+    int n = text.length();
+    int m = pattern.length();
+    int count = 0;
 
-	queue<pair<int, int>> q;
+    vector<int> lps = computeLPS(pattern);
 
-	pair<int, int> pos;
+    int i = 0;  
+    int j = 0;  
 
-	vector<int> complex(1,0);
-	int index = 0;
+    while (i < n) {
+        if (pattern[j] == text[i]) {
+            j++;
+            i++;
+        }
+            
+        if (j == m) {
+            count++;
+            j = lps[j - 1];
+        }
+        else if (i < n && pattern[j] != text[i]) {
+            if (j != 0)
+                j = lps[j - 1];
+            else
+                i++;
+        }
+    }
 
-	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) {
-			if (visited[i][j])
-				continue;
-			q.push(make_pair(i, j));
-			while (!q.empty()) {
-				pos = q.front();
-				q.pop();
-				if (visited[pos.first][pos.second])
-					continue;
-				visited[pos.first][pos.second] = true;
-				if (index == complex.size()) {
-					complex.emplace_back(0);
-				}
-				complex[index]++;
-				if (!visited[max(0, pos.first - 1)][pos.second])
-					q.push(make_pair(max(0, pos.first - 1), pos.second));
-				if (!visited[min(N-1, pos.first+1)][pos.second])
-					q.push(make_pair(min(N-1, pos.first + 1), pos.second));
-				if (!visited[pos.first][max(0,pos.second-1)])
-					q.push(make_pair(pos.first , max(0, pos.second - 1)));
-				if (!visited[pos.first][min(N-1, pos.second + 1)])
-					q.push(make_pair(pos.first, min(N-1, pos.second + 1)));
-			}
-			index++;
-		}
-	}
-	cout << complex.size()<<"\n";
-	sort(complex.begin(), complex.end());
-	for (int num : complex) {
-		cout << num << "\n";
-	}
+    return count;
+}
 
+int main() {
 
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+
+    int N, M;
+    cin >> N >> M;
+
+    string S;
+    cin >> S;
+
+    string pattern="IOI";
+
+    for (int i = 1; i < N; ++i) {
+        pattern += "OI";
+    }
+
+    int result = KMPSearch(S, pattern);
+    
+    cout << result;
+
+    return 0;
 }
