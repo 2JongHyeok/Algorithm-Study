@@ -1,63 +1,21 @@
 #include <iostream>
-#include <string>
-#include <vector>
 
 using namespace std;
 
-std::vector<int> computeLPS(const std::string& pattern) {
-    int m = pattern.length();
-    vector<int> lps(m, 0);
-    int len = 0;
-    int i = 1;
-
-    while (i < m) {
-        if (pattern[i] == pattern[len]) {
-            len++;
-            lps[i] = len;
-            i++;
-        }
-        else {
-            if (len != 0) {
-                len = lps[len - 1];
-            }
-            else {
-                lps[i] = 0;
-                i++;
-            }
-        }
-    }
-    return lps;
+long long gcd(long long  a, long long b) {
+	int c;
+	while (b != 0)
+	{
+		c = a % b;
+		a = b;
+		b = c;
+	}
+	return a;
 }
 
-int KMPSearch(const string& text, const string& pattern) {
-    int n = text.length();
-    int m = pattern.length();
-    int count = 0;
-
-    vector<int> lps = computeLPS(pattern);
-
-    int i = 0;  
-    int j = 0;  
-
-    while (i < n) {
-        if (pattern[j] == text[i]) {
-            j++;
-            i++;
-        }
-            
-        if (j == m) {
-            count++;
-            j = lps[j - 1];
-        }
-        else if (i < n && pattern[j] != text[i]) {
-            if (j != 0)
-                j = lps[j - 1];
-            else
-                i++;
-        }
-    }
-
-    return count;
+long long lcm(long long a, long long b)
+{
+	return a * b / gcd(a, b);
 }
 
 int main() {
@@ -66,21 +24,36 @@ int main() {
     std::cin.tie(NULL);
     std::cout.tie(NULL);
 
-    int N, M;
-    cin >> N >> M;
+	int T;
+	cin >> T;
+	for (int test = 0; test < T; ++test) {
+		int M, N, x, y;
+		cin >> M >> N >> x >> y;
 
-    string S;
-    cin >> S;
+		int max_x = lcm(M, N) / M;
+		int max_y = lcm(M, N) / N;
+		x--;
+		y--;
 
-    string pattern="IOI";
 
-    for (int i = 1; i < N; ++i) {
-        pattern += "OI";
-    }
+		int result = -1;
 
-    int result = KMPSearch(S, pattern);
-    
-    cout << result;
-
-    return 0;
+		if (M > N) {
+			for (int i = 0; i < max_x; ++i) {
+				if ((M * i + x) % N == y) {
+					result = M * i + x;
+					break;
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < max_y; ++i) {
+				if ((N * i + y) % M == x) {
+					result = N * i + y;
+					break;
+				}
+			}
+		}
+		cout << result+1<<"\n";
+	}
 }
