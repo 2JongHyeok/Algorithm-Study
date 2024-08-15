@@ -1,6 +1,5 @@
 #include <iostream>
-#include <string>
-#include <stack>
+#include <vector>
 
 using namespace std;
 
@@ -10,52 +9,42 @@ int main() {
     std::cin.tie(NULL);
     std::cout.tie(NULL);
 
-    string s;
-    cin >> s;
-    stack<int> st;
-    int now = 0;
-    for (int i = s.size() - 1; i >= 0; --i) {
-        if (s[i] == ')') {
-            st.push(-1);
+    int H, W;
+    cin >> H >> W;
+
+    vector<int> v;
+    int block;
+    int maxH = 0;
+    int midW = 0;
+    for (int i = 0; i < W; ++i) {
+        cin >> block;
+        v.emplace_back(block);
+        if (maxH < block) {
+            maxH = block;
+            midW = i;
         }
-        else if (s[i] == '(') {
-            now = st.top();
-            if (now == -1) {
-                st.pop();
-                --i;
-                continue;
-            }
-            st.pop();
-            st.pop();
-            now *= int(s[--i]-'0');
-            if (!st.empty()) {
-                if (st.top() != -1) {
-                    int adds = st.top();
-                    st.pop();
-                    st.push(now+adds);
-                    continue;
-                }
-            }
-            st.push(now);
+    }
+
+    int firstH = v[0];
+    int result = 0;
+    for (int i = 0; i < midW; ++i) {
+        if (firstH < v[i]) {
+            firstH = v[i];
         }
         else {
-            if (st.empty()) {
-                st.push(1);
-                continue;
-            }
-            if (st.top() == -1)
-                st.push(1);
-            else {
-                int temp = st.top();
-                st.pop();
-                st.push(temp + 1);
-            }
+            result += firstH - v[i];
         }
     }
-    if (st.empty()) {
-        cout << "0";
+    firstH = v[W - 1];
+    for (int i = W - 1; i > midW; --i) {
+        if (firstH < v[i]) {
+            firstH = v[i];
+        }
+        else {
+            result += firstH - v[i];
+        }
     }
-    else {
-        cout << st.top();
-    }
+
+    cout << result;
+
 }
