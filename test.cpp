@@ -1,32 +1,7 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <limits.h>
 
 using namespace std;
-int N, M;
-
-vector<int> v(9, 0);
-vector<int> visited(9,0);
-vector<int> numbers(9, INT_MAX);
-
-void back_tracking(int n) {
-
-	if (n == M) {
-		for (int num : v) {
-			if (num == 0)
-				break;
-			cout << num << " ";
-		}
-		cout << "\n";
-		return;
-	}
-
-	for (int i = 0; i < N; ++i) {
-		v[n] = numbers[i];
-		back_tracking(n + 1);
-	}
-}
 
 int main() {
 
@@ -34,10 +9,21 @@ int main() {
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 
-	cin >> N >> M;
-	for (int i = 0; i < N; ++i) {
-		cin >> numbers[i];
+	int n;
+	vector<int> dp(10001,1);
+	cin >> n;
+
+	for (int i = 2; i <= 10000; ++i) {
+		dp[i] += dp[i - 2];
 	}
-	sort(numbers.begin(), numbers.end());
-	back_tracking(0);
+
+	for (int i = 3; i <= 10000; ++i) {
+		dp[i] += dp[i - 3];
+	}
+
+	int num;
+	for (int i = 0; i < n; ++i) {
+		cin >> num;
+		cout << dp[num] << "\n";
+	}
 }
