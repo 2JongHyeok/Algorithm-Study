@@ -10,7 +10,7 @@ vector<int> v(9, 0);
 vector<int> visited(9,0);
 vector<int> numbers(9, INT_MAX);
 
-void back_tracking(int n, int count) {
+void back_tracking(int n) {
 
 	if (n == M) {
 		for (int num : v) {
@@ -22,12 +22,9 @@ void back_tracking(int n, int count) {
 		return;
 	}
 
-	for (int i = count; i < N; ++i) {
-		if (visited[i] == 1)continue;
+	for (int i = 0; i < N; ++i) {
 		v[n] = numbers[i];
-		visited[i] = 1;
-		back_tracking(n + 1, i+1);
-		visited[i] = 0;
+		back_tracking(n + 1);
 	}
 }
 
@@ -42,5 +39,5 @@ int main() {
 		cin >> numbers[i];
 	}
 	sort(numbers.begin(), numbers.end());
-	back_tracking(0, 0);
+	back_tracking(0);
 }
