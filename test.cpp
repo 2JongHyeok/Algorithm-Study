@@ -7,7 +7,7 @@ int N, M;
 
 vector<int> v(9, 0);
 
-void back_tracking(int n) {
+void back_tracking(int n, int count) {
 
     if (n == M) {
         for (int num : v) {
@@ -19,9 +19,9 @@ void back_tracking(int n) {
         return;
     }
 
-    for (int i = 1; i <= N; ++i) {
+    for (int i = count; i <= N; ++i) {
         v[n] = i;
-        back_tracking(n + 1);
+        back_tracking(n + 1, i);
     }
 }
 
@@ -32,5 +32,5 @@ int main() {
     std::cout.tie(NULL);
 
     cin >> N >> M;
-    back_tracking(0);
+    back_tracking(0, 1);
 }
