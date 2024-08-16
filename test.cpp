@@ -5,10 +5,9 @@
 using namespace std;
 int N, M;
 
-vector<int> visited(9, 0);
 vector<int> v(9, 0);
-set<int>s;
-void back_tracking(int n, int cnt) {
+
+void back_tracking(int n) {
 
     if (n == M) {
         for (int num : v) {
@@ -20,13 +19,9 @@ void back_tracking(int n, int cnt) {
         return;
     }
 
-    for (int i = cnt; i <= N; ++i) {
-        if (visited[i] == 1)
-            continue;
-        visited[i] = 1;
+    for (int i = 1; i <= N; ++i) {
         v[n] = i;
-        back_tracking(n + 1, i+1);
-        visited[i] = 0;
+        back_tracking(n + 1);
     }
 }
 
@@ -37,5 +32,5 @@ int main() {
     std::cout.tie(NULL);
 
     cin >> N >> M;
-    back_tracking(0,1);
+    back_tracking(0);
 }
