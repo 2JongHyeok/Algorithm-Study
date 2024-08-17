@@ -1,17 +1,14 @@
 #include <iostream>
+#include <set>
 #include <vector>
-#include <algorithm>
-#include <limits.h>
-#include <map>
 
 using namespace std;
 
 int N, M;
 vector<int> v(9, 0);
-vector<int> numbers(9, INT_MAX);
-vector<int> visited(9, false);
+set<int> numbers;
 
-void back_tracking(int n, int count) {
+void back_tracking(int n) {
 	if (n == M) {
 		for (int i = 0; i < n; ++i) {
 			cout << v[i] << " ";
@@ -19,18 +16,9 @@ void back_tracking(int n, int count) {
 		cout << "\n";
 		return;
 	}
-	v[n] = -1;
-	for (int i = count; i < N; ++i) {
-		if (i != 0) {
-			if (numbers[i] == v[n])
-				continue;
-		}
-		if (visited[i]) continue;
-		v[n] = numbers[i];
-		visited[i] = true;
-		back_tracking(n+1, i+1);
-		visited[i] = false;
-
+	for (int num : numbers) {
+		v[n] = num;
+		back_tracking(n + 1);
 	}
 }
 
@@ -44,9 +32,8 @@ int main() {
 	int num;
 	for (int i = 0; i < N; ++i) {
 		cin >> num;
-		numbers.emplace_back(num);
+		numbers.insert(num);
 	}
-	sort(numbers.begin(), numbers.end());
 
-	back_tracking(0,0);
+	back_tracking(0);
 }
