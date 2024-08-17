@@ -18,6 +18,9 @@ void back_tracking(int n) {
 	}
 	for (int num : numbers) {
 		v[n] = num;
+		if (n > 0) {
+			if (v[n - 1] > v[n]) continue;
+		}
 		back_tracking(n + 1);
 	}
 }
