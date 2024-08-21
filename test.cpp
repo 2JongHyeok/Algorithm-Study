@@ -1,6 +1,6 @@
 #include <iostream>
-#include <deque>
-#include <ctype.h>
+#include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -10,68 +10,67 @@ int main() {
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 
-	int T;
-	cin >> T;
-	for (int i = 0; i < T; ++i) {
-		string p;
-		cin >> p;
-		int n;
-		cin >> n;
-		deque<int> d;
-		string numbers;
-		cin >> numbers;
-		int number=0;
-		for (char c : numbers) {
-			if (isdigit(c)) {
-				number *= 10;
-				number += int(c-'0');
-			}
-			if (c == ','||c == ']') {
-				d.push_back(number);
-				number = 0;
-			}
-		}
-		bool rev = false;
-		bool error = false;
-		for (char c : p) {
-			if (c == 'R') {
-				if (rev)rev = false;
-				else rev = true;
-			}
-			if (c == 'D') {
-				if (n == 0) {
-					error = true;
-					break;
+	int M, N, H;
+	cin >> M >> N >> H;
+	vector<vector<vector<int>>> v(H, vector<vector<int>>(N, vector<int>(M,0)));
+	queue<pair<pair<int, int>, pair<int, int>>> q;
+	for (int h = 0; h < H; ++h) {
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < M; ++j) {
+				int num;
+				cin >> num;
+				v[h][i][j] = num;
+				if (num == 1) {
+					q.push(make_pair(make_pair(i, j), make_pair(h, 0)));
+					v[h][i][j] = 0;
 				}
-				else {
-					if (rev) d.pop_back();
-					else d.pop_front();
-					n--;
-				}
-			}
-		}
-
-		if (error) cout << "error\n";
-		else {
-			cout << "[";
-			if (n == 0) {
-				cout << "]\n";
-				continue;
-			}
-			if (rev) {
-				for (int i = 0; i < n - 1; ++i) {
-					cout << d.back() << ",";
-					d.pop_back();
-				}
-				cout << d.back() << "]\n";
-			}
-			else {
-				for (int i = 0; i < n - 1; ++i) {
-					cout << d.front() << ",";
-					d.pop_front();
-				}
-				cout << d.front() << "]\n";
 			}
 		}
 	}
+
+	int X[4]{ 0,0,1,-1 };
+	int Y[4]{ 1,-1,0,0 };
+	int Z[2]{ 1,-1};
+	
+	int max = -1;
+
+	while (!q.empty()) {
+		pair<pair<int, int>, pair<int, int>> p = q.front();
+		q.pop();
+		if (v[p.second.first][p.first.first][p.first.second] == 0) {
+			v[p.second.first][p.first.first][p.first.second] = 1;
+			for (int i = 0; i < 4; ++i) {
+				int new_x = p.first.second + X[i];
+				int new_y = p.first.first + Y[i];
+				int z = p.second.first;
+
+				if (new_x < 0 || new_x > M - 1 || new_y < 0 || new_y > N - 1)continue;
+				if (v[z][new_y][new_x] == 0) {
+					q.push(make_pair(make_pair(new_y, new_x), make_pair(z, p.second.second + 1)));
+				}
+			}
+			for (int i = 0; i < 2; ++i) {
+				int new_z = p.second.first + Z[i];
+				int x = p.first.second;
+				int y = p.first.first;
+				if (new_z < 0 || new_z > H - 1)continue;
+				if (v[new_z][y][x] == 0) {
+					q.push(make_pair(make_pair(y, x), make_pair(new_z, p.second.second + 1)));
+				}
+			}
+			max = p.second.second;
+		}
+	}
+
+	for (int h = 0; h < H; ++h) {
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < M; ++j) {
+				if (v[h][i][j] == 0) {
+					max = -1;
+				}
+			}
+		}
+	}
+
+	cout << max;
 }	
