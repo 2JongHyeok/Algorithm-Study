@@ -9,68 +9,84 @@ int main() {
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-
-	int M, N, H;
-	cin >> M >> N >> H;
-	vector<vector<vector<int>>> v(H, vector<vector<int>>(N, vector<int>(M,0)));
-	queue<pair<pair<int, int>, pair<int, int>>> q;
-	for (int h = 0; h < H; ++h) {
-		for (int i = 0; i < N; ++i) {
-			for (int j = 0; j < M; ++j) {
-				int num;
-				cin >> num;
-				v[h][i][j] = num;
-				if (num == 1) {
-					q.push(make_pair(make_pair(i, j), make_pair(h, 0)));
-					v[h][i][j] = 0;
-				}
-			}
-		}
-	}
-
-	int X[4]{ 0,0,1,-1 };
-	int Y[4]{ 1,-1,0,0 };
-	int Z[2]{ 1,-1};
 	
-	int max = -1;
+	int N;
+	cin >> N;
 
-	while (!q.empty()) {
-		pair<pair<int, int>, pair<int, int>> p = q.front();
-		q.pop();
-		if (v[p.second.first][p.first.first][p.first.second] == 0) {
-			v[p.second.first][p.first.first][p.first.second] = 1;
-			for (int i = 0; i < 4; ++i) {
-				int new_x = p.first.second + X[i];
-				int new_y = p.first.first + Y[i];
-				int z = p.second.first;
+	vector<vector<char>> painting(N, vector<char>(N,'0'));
+	vector<vector<bool>> RGvisited(N, vector<bool>(N, false));
+	vector<vector<bool>> visited(N, vector<bool>(N, false));
 
-				if (new_x < 0 || new_x > M - 1 || new_y < 0 || new_y > N - 1)continue;
-				if (v[z][new_y][new_x] == 0) {
-					q.push(make_pair(make_pair(new_y, new_x), make_pair(z, p.second.second + 1)));
-				}
-			}
-			for (int i = 0; i < 2; ++i) {
-				int new_z = p.second.first + Z[i];
-				int x = p.first.second;
-				int y = p.first.first;
-				if (new_z < 0 || new_z > H - 1)continue;
-				if (v[new_z][y][x] == 0) {
-					q.push(make_pair(make_pair(y, x), make_pair(new_z, p.second.second + 1)));
-				}
-			}
-			max = p.second.second;
+	for (int i = 0; i < N; ++i) {
+		string s;
+		cin >> s;
+		for (int j = 0; j < N; ++j) {
+			painting[i][j] = s[j];
 		}
 	}
 
-	for (int h = 0; h < H; ++h) {
-		for (int i = 0; i < N; ++i) {
-			for (int j = 0; j < M; ++j) {
-				if (v[h][i][j] == 0) {
-					max = -1;
+	queue<pair<int, int>> RGq;
+	queue<pair<int, int>> q;
+
+	int RG_sec_num = 0;
+	int sec_num = 0;
+
+	int X[4] = { 0,0,1,-1 };
+	int Y[4] = { 1,-1,0,0 };
+	char now_color = 'R';
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			if (!visited[i][j]) {
+				q.push(make_pair(i, j));
+				sec_num++;
+				now_color = painting[i][j];
+			}
+			if (!RGvisited[i][j]) {
+				RGq.push(make_pair(i, j));
+				RG_sec_num++;
+			}
+			while (!RGq.empty()) {
+				pair<int, int> p = RGq.front();
+				RGq.pop();
+				if (RGvisited[p.first][p.second]) continue;
+				RGvisited[p.first][p.second] = true;
+				for (int i = 0; i < 4; ++i) {
+					int new_x = p.second + X[i];
+					int new_y = p.first + Y[i];
+					if (new_x < 0 || new_x > N - 1 || new_y < 0 || new_y > N - 1) continue;
+					if (RGvisited[new_y][new_x]) continue;
+					if (now_color == 'R' || now_color == 'G') {
+						if (painting[new_y][new_x] == 'B')continue;
+					}
+					else if (now_color == 'B') {
+						if (painting[new_y][new_x] == 'R' || painting[new_y][new_x] == 'G') continue;
+					}
+					RGq.push(make_pair(new_y, new_x));
+				}
+			}
+			while (!q.empty()) {
+				pair<int, int> p = q.front();
+				q.pop();
+				if (visited[p.first][p.second]) continue;
+				visited[p.first][p.second] = true;
+				for (int i = 0; i < 4; ++i) {
+					int new_x = p.second + X[i];
+					int new_y = p.first + Y[i];
+					if (new_x < 0 || new_x > N - 1 || new_y < 0 || new_y > N - 1) continue;
+					if (visited[new_y][new_x]) continue;
+					if (now_color == 'R' ) {
+						if (painting[new_y][new_x] == 'B' || painting[new_y][new_x] == 'G')continue;
+					}
+					else if (now_color == 'G') {
+						if (painting[new_y][new_x] == 'R' || painting[new_y][new_x] == 'B') continue;
+					}
+					else if (now_color == 'B') {
+						if (painting[new_y][new_x] == 'R' || painting[new_y][new_x] == 'G') continue;
+					}
+					q.push(make_pair(new_y, new_x));
 				}
 			}
 		}
 	}
-
-	cout << max;
+	cout << sec_num << " " << RG_sec_num;
 }	
