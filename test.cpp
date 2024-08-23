@@ -9,84 +9,61 @@ int main() {
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	
-	int N;
-	cin >> N;
 
-	vector<vector<char>> painting(N, vector<char>(N,'0'));
-	vector<vector<bool>> RGvisited(N, vector<bool>(N, false));
-	vector<vector<bool>> visited(N, vector<bool>(N, false));
+	vector<int> board(101, -1);
 
+	int N, M;
+	cin >> N >> M;
+
+	vector<pair<int, int>> ladder;
+	vector<pair<int, int>> snake;
+	int start, end;
 	for (int i = 0; i < N; ++i) {
-		string s;
-		cin >> s;
-		for (int j = 0; j < N; ++j) {
-			painting[i][j] = s[j];
-		}
+		cin >> start >> end;
+		ladder.emplace_back(make_pair(start, end));
 	}
-
-	queue<pair<int, int>> RGq;
+	for (int i = 0; i < M; ++i) {
+		cin >> start >> end;
+		snake.emplace_back(make_pair(start, end));
+	}
 	queue<pair<int, int>> q;
-
-	int RG_sec_num = 0;
-	int sec_num = 0;
-
-	int X[4] = { 0,0,1,-1 };
-	int Y[4] = { 1,-1,0,0 };
-	char now_color = 'R';
-	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) {
-			if (!visited[i][j]) {
-				q.push(make_pair(i, j));
-				sec_num++;
-				now_color = painting[i][j];
+	q.push(make_pair(1, 0));
+	int answer = 0;
+	while (!q.empty()) {
+		if (answer != 0)break;
+		int now = q.front().first;
+		int count = q.front().second;
+		q.pop();
+		if (board[now] != -1)continue;
+		board[now] = count;
+		for (int i = 1; i <= 6; ++i) {
+			int new_pos = now + i;
+			if (new_pos > 100) {
+				answer = count + 1;
+				break;
 			}
-			if (!RGvisited[i][j]) {
-				RGq.push(make_pair(i, j));
-				RG_sec_num++;
-			}
-			while (!RGq.empty()) {
-				pair<int, int> p = RGq.front();
-				RGq.pop();
-				if (RGvisited[p.first][p.second]) continue;
-				RGvisited[p.first][p.second] = true;
-				for (int i = 0; i < 4; ++i) {
-					int new_x = p.second + X[i];
-					int new_y = p.first + Y[i];
-					if (new_x < 0 || new_x > N - 1 || new_y < 0 || new_y > N - 1) continue;
-					if (RGvisited[new_y][new_x]) continue;
-					if (now_color == 'R' || now_color == 'G') {
-						if (painting[new_y][new_x] == 'B')continue;
+			bool noLadder = false;
+			bool noSnake = false;
+			while (!noLadder || !noSnake) {
+				noLadder = true;
+				noSnake = true;
+				for (int j = 0; j < N; ++j) {
+					if (ladder[j].first == new_pos) {
+						board[new_pos] = count;
+						new_pos = ladder[j].second;
+						noLadder = false;
 					}
-					else if (now_color == 'B') {
-						if (painting[new_y][new_x] == 'R' || painting[new_y][new_x] == 'G') continue;
+				}
+				for (int j = 0; j < M; ++j) {
+					if (snake[j].first == new_pos) {
+						board[new_pos] = count;
+						new_pos = snake[j].second;
+						noSnake = false;
 					}
-					RGq.push(make_pair(new_y, new_x));
 				}
 			}
-			while (!q.empty()) {
-				pair<int, int> p = q.front();
-				q.pop();
-				if (visited[p.first][p.second]) continue;
-				visited[p.first][p.second] = true;
-				for (int i = 0; i < 4; ++i) {
-					int new_x = p.second + X[i];
-					int new_y = p.first + Y[i];
-					if (new_x < 0 || new_x > N - 1 || new_y < 0 || new_y > N - 1) continue;
-					if (visited[new_y][new_x]) continue;
-					if (now_color == 'R' ) {
-						if (painting[new_y][new_x] == 'B' || painting[new_y][new_x] == 'G')continue;
-					}
-					else if (now_color == 'G') {
-						if (painting[new_y][new_x] == 'R' || painting[new_y][new_x] == 'B') continue;
-					}
-					else if (now_color == 'B') {
-						if (painting[new_y][new_x] == 'R' || painting[new_y][new_x] == 'G') continue;
-					}
-					q.push(make_pair(new_y, new_x));
-				}
-			}
+			q.push(make_pair(new_pos, count + 1));
 		}
 	}
-	cout << sec_num << " " << RG_sec_num;
+	cout << answer;
 }	
