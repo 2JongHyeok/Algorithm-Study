@@ -1,33 +1,57 @@
 #include <iostream>
-#include <tuple>
 #include <vector>
-#include <algorithm>
+#include <queue>
+#include <string>
 
 using namespace std;
 
 int main() {
-	vector<pair<pair<int, int>, int>> v;
+	std::ios::sync_with_stdio(false);
+	std::cin.tie(NULL);
+	std::cout.tie(NULL);
 
-	int n;
-	cin >> n;
-	int num;
-	for (int i = 0; i < n; ++i) {
-		cin >> num;
-		v.emplace_back(make_pair(make_pair(num, 0), i));
-	}
+	int T;
+	cin >> T;
+	
+	int D, S, L, R;
+	string change;
+	for (int i = 0; i < T; ++i) {
+		int p[10001]{};
+		queue<pair<int, string>>  q;
+		int start, end;
+		cin >> start >> end;
+		q.push(make_pair(start, ""));
+		while (true) {
+			int n = q.front().first;
+			string s = q.front().second;
+			q.pop();
+			if (n == end) {
+				cout << s << "\n";
+				break;
+			}
+			
+			D = n * 2 % 10000;
+			S = n - 1;
+			if (S < 0) S = 9999;
+			L = (n * 10)%10000 + n / 1000;
+			R = n / 10 + (n % 10) * 1000;
 
-	sort(v.begin(), v.end());
-
-	for (int i = 0; i < n; ++i) {
-		v[i].first.second = i;
-	}
-
-	sort(v.begin(), v.end(), [](const auto& a, const auto& b) {
-			return a.second < b.second;
+			if (p[D] == 0) {
+				q.push(make_pair(D, s + 'D'));
+				p[D] = 1;
+			}
+			if (p[S] == 0) {
+				q.push(make_pair(S, s + 'S'));
+				p[S] = 1;
+			}
+			if (p[L] == 0) {
+				q.push(make_pair(L, s + 'L'));
+				p[L] = 1;
+			}
+			if (p[R] == 0) {
+				q.push(make_pair(R, s + 'R'));
+				p[R] = 1;
+			}
 		}
-	);
-
-	for (int i = 0; i < n; ++i) {
-		cout << v[i].first.second << " ";
 	}
 }
