@@ -1,57 +1,67 @@
 #include <iostream>
-#include <vector>
-#include <queue>
-#include <string>
 
 using namespace std;
+int N, M;
+int paper[500][500];
+int visited[500][500];
+int X[4] = {0,0,1,-1};
+int Y[4] = {1,-1,0,0};
+int Max = 0;
+void DFS(int x, int y, int count, int num) {
+	for (int i = 0; i < 4; ++i) {
+		int new_x = x + X[i];
+		int new_y = y + Y[i];
+		if (new_x <0 || new_x > M - 1 || new_y < 0 || new_y > N - 1) continue;
+		if (visited[new_y][new_x] == 1)continue;
+		if (count == 3) {
+			if (Max < num + paper[new_y][new_x])
+				Max = num + paper[new_y][new_x];
+			continue;
+		}
+		visited[new_y][new_x] = 1;
+		DFS(new_x, new_y, count + 1, num + paper[new_y][new_x]);
+		visited[new_y][new_x] = 0;
+	}
+}
 
 int main() {
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 
-	int T;
-	cin >> T;
-	
-	int D, S, L, R;
-	string change;
-	for (int i = 0; i < T; ++i) {
-		int p[10001]{};
-		queue<pair<int, string>>  q;
-		int start, end;
-		cin >> start >> end;
-		q.push(make_pair(start, ""));
-		while (true) {
-			int n = q.front().first;
-			string s = q.front().second;
-			q.pop();
-			if (n == end) {
-				cout << s << "\n";
-				break;
-			}
-			
-			D = n * 2 % 10000;
-			S = n - 1;
-			if (S < 0) S = 9999;
-			L = (n * 10)%10000 + n / 1000;
-			R = n / 10 + (n % 10) * 1000;
+	cin >> N >> M;
 
-			if (p[D] == 0) {
-				q.push(make_pair(D, s + 'D'));
-				p[D] = 1;
-			}
-			if (p[S] == 0) {
-				q.push(make_pair(S, s + 'S'));
-				p[S] = 1;
-			}
-			if (p[L] == 0) {
-				q.push(make_pair(L, s + 'L'));
-				p[L] = 1;
-			}
-			if (p[R] == 0) {
-				q.push(make_pair(R, s + 'R'));
-				p[R] = 1;
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < M; ++j) {
+			cin >> paper[i][j];
+		}
+	}
+
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < M; ++j) {
+			visited[i][j] = 1;
+			DFS(j, i, 1, paper[i][j]);
+			visited[i][j] = 0;
+			int sum, dx, dy;
+			for (int k = 0; k < 4; k++)
+			{
+				sum = paper[i][j];
+				for (int dir = 0; dir < 4; dir++)
+				{
+					if (dir == k)
+						continue;
+					dx = j + X[dir];
+					dy = i + Y[dir];
+					if (dx >= 0 && dx < M && dy >= 0 && dy < N)
+						sum += paper[dy][dx];
+					else {
+						break;
+					}
+				}
+				if (Max < sum)
+					Max = sum;
 			}
 		}
 	}
+	cout << Max;
 }
