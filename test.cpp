@@ -1,34 +1,49 @@
 #include <iostream>
-#include <vector>
+#include <queue>
+#include <map>
+
 
 using namespace std;
-
+map<long long, bool> visited;
 
 int main() {
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
+	
+	int A, B;
+	cin >> A >> B;
+	queue<pair<long long, long long>> q;
 
-	int N;
-	cin >> N;
-	int num;
-	vector<int> v(N,0);
-	vector<int> dp;
-	dp.emplace_back(0);
-	bool add = false;
-	for (int i = 0; i < N; ++i) {
-		cin >> v[i];
-		if (v[i] > dp[dp.size() - 1]) {
-			dp.emplace_back(v[i]);
-			continue;
-		}
+	q.push(make_pair(A, 1));
+	visited[A] = true;
+	
+	int answer = -1;
 
-		for (int j = 1; j <dp.size(); ++j) {
-			if (v[i] <= dp[j]) {
-				dp[j] = v[i];
+	while (!q.empty()) {
+		long long num = q.front().first;
+		int count = q.front().second;
+		q.pop();
+		if (num * 2 <= 1'000'000'000) {
+			if (num * 2 == B) {
+				answer = count+1;
 				break;
+			}
+			if (!visited[num * 2]) {
+				visited[num * 2] = true;
+				q.push(make_pair(num * 2, count + 1));
+			}
+		}
+		if (num * 10 + 1 <= 1'000'000'000) {
+			if (num * 10+1 == B) {
+				answer = count+1;
+				break;
+			}
+			if (!visited[num * 10 + 1]) {
+				visited[num * 10 + 1] = true;
+				q.push(make_pair(num * 10 + 1, count + 1));
 			}
 		}
 	}
-	cout << dp.size()-1;
+	cout << answer;
 }
