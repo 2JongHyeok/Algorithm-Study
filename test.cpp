@@ -1,45 +1,88 @@
 #include <iostream>
-#include <algorithm>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
+class Node {
+public:
+	char me_ = 'a';
+	Node* left_ = nullptr;
+	Node* right_ = nullptr;
+	Node(char first) { me_ = first; }
 
+	Node* find_node(char target) {
+		if (me_ == target) {
+			return this;
+		}
+
+		Node* result = nullptr;
+
+		if (left_) {
+			result = left_->find_node(target);
+			if (result) return result;
+		}
+
+		if (right_) {
+			result = right_->find_node(target);
+			if (result) return result;
+		}
+
+		return nullptr;
+	}
+
+	void add_left(char name) {
+		left_ = new Node(name);
+	}
+
+	void add_right(char name) {
+		right_ = new Node(name);
+	}
+
+	void preorder_traversal() {
+		cout << me_;
+		if (left_ != nullptr)
+			left_->preorder_traversal();
+		if (right_ != nullptr)
+			right_->preorder_traversal();
+	}
+
+	void inorder_traversal() {
+		if (left_ != nullptr)
+			left_->inorder_traversal();
+		cout << me_;
+		if (right_ != nullptr)
+			right_->inorder_traversal();
+	}
+	void postorder_traversal() {
+		if (left_ != nullptr)
+			left_->postorder_traversal();
+		if (right_ != nullptr)
+			right_->postorder_traversal();
+		cout << me_;
+	}
+};
 
 int main() {
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-	
+	Node* tree = new Node('A');
 	int N;
 	cin >> N;
-	vector<vector<int>>nums(N,vector<int>(N,0));
-	vector<vector<int>>dp(N,vector<int>(N,0));
+	char first, second, third;
 	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < i+1; ++j) {
-			cin >> nums[i][j];
-		}
+		Node* now;
+		cin >> first >> second >> third;
+		now = tree->find_node(first);
+		if(second != '.')
+			now->add_left(second);
+		if (third != '.')
+			now->add_right(third);
 	}
-	dp[0][0] = nums[0][0];
-	for (int i = 1; i < N; ++i) {
-		for (int j = 0; j < i+1; ++j) {
-			if (j == 0) {
-				dp[i][j] = dp[i - 1][j] + nums[i][j];
-			}
-			else if (j == i) {
-				dp[i][j] = dp[i - 1][j - 1] + nums[i][j];
-			}
-			else {
-				dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - 1]) + nums[i][j];
-			}
-		}
-	}
-
-	int maxi = 0;
-
-	for (int num : dp[N - 1]) {
-		if (maxi < num)
-			maxi = num;
-	}
-	cout << maxi;
+	tree->preorder_traversal();
+	cout << "\n";
+	tree->inorder_traversal();
+	cout << "\n";
+	tree->postorder_traversal();
 }
