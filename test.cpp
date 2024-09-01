@@ -10,36 +10,37 @@ int main() {
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	
-	int T,N;
-	cin >> T;
-	for (int test = 0; test < T; ++test) {
-		cin >> N;
-		vector<vector<int>> stickers(2, vector<int>(N, 0));
-		vector<vector<int>> dp(2, vector<int>(N, 0));
-		for (int i = 0; i < 2; ++i) {
-			for (int j = 0; j < N; ++j) {
-				cin >> stickers[i][j];
+	int N, M;
+	cin >> N >> M;
+	int num;
+	int line;
+	vector<vector<int>> dp(N, vector<int>(N, 0));
+	for (int i = 0; i < N; ++i) {
+		line = 0;
+		for (int j = 0; j < N; ++j) {
+			cin >> num;
+			line += num;
+			if (i > 0) {
+				dp[i][j] = dp[i - 1][j] + line;
 			}
+			else
+				dp[i][j] = line;
 		}
-		dp[0][0] = stickers[0][0];
-		dp[1][0] = stickers[1][0];
-		if (N == 1) {
-			cout << max(dp[0][0], dp[1][0]) << "\n";
-			continue;
-		}
-		dp[0][1] = stickers[0][1] + stickers[1][0];
-		dp[1][1] = stickers[1][1] + stickers[0][0];
-		for (int i = 2; i < N; ++i) {
-			for (int j = 0; j < 2; ++j) {
-				if (j == 0) {
-					dp[j][i] = max(dp[1][i - 2], max(dp[1][i - 1], dp[0][i - 2])) + stickers[j][i];
-				}
-				else if (j == 1) {
-					dp[j][i] = max(dp[0][i - 2], max(dp[0][i - 1], dp[1][i - 2])) + stickers[j][i];
-				}
-			}
-		}
-		
-		cout << max(max(dp[0][N - 1], dp[1][N - 1]), max(dp[0][N - 2], dp[1][N - 2]))<<"\n";
 	}
+	int x1, x2, y1, y2;
+	for (int i = 0; i < M; ++i) {
+		cin >> y1 >> x1 >> y2 >> x2;
+		x1--; x2--; y1--; y2--;
+		int answer = dp[y2][x2];
+		if (x1 - 1 >= 0) {
+			answer -= dp[y2][x1 - 1];
+		}
+		if (y1 - 1 >= 0) {
+			answer -= dp[y1 - 1][x2];
+		}
+		if(x1-1>=0 && y1-1>=0)
+			 answer+= dp[y1 - 1][x1 - 1];
+		cout << answer << "\n";
+	}
+
 }
