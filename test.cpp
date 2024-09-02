@@ -14,8 +14,8 @@ int main() {
 	int N, M;
 	cin >> N >> M;
 	
-	vector<vector<pair<int, int>>> buses(M+1, vector<pair<int,int>>());
-	vector<int>costs(N + 1, INFINITY);
+	vector<vector<pair<int, int>>> buses(1001, vector<pair<int,int>>());
+	vector<int>costs(1001, INFINITY);
 
 	std::priority_queue<pair<int,long long>, std::vector<pair<int, long long>>, std::greater<pair<int, long long>>> pq;
 
