@@ -1,31 +1,59 @@
 #include <iostream>
-#include <string>
-#include <algorithm>
+#include <queue>
+#include <map>
 
-using namespace std;
-int dp[1001][1001]{};
 
-int main() {
+int main()
+{
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
+
+	int N, K;
+	std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
+	std::vector<int> v(200'002, 100'001);
+	std::cin >> N >> K;
+	pq.push(std::make_pair(1, N));
 	
-	string s1, s2;
-	cin >> s1 >> s2;
-	if (s1 == s2) {
-		cout << s1.size();
+	if (N >= K) {
+		std::cout << N - K;
+		return 0;
 	}
-	else {
-		for (int i = 1; i <= s1.size(); ++i) {
-			for (int j = 1; j <= s2.size(); ++j) {
-				if (s1[i - 1] == s2[j - 1]) {
-					dp[i][j] = dp[i - 1][j - 1] + 1;
+	while (!pq.empty()) {
+		std::pair<int, int> p = pq.top();
+		pq.pop();
+		if (p.second > K) {
+			v[K] = std::min(v[K], p.first + p.second - K);
+			continue;
+		}
+		if (p.second * 2 <= K + 50000) {
+			if (v[p.second * 2] > p.first) {
+				if (p.second * 2 == K) {
+					v[p.second * 2] = p.first;
+					break;
 				}
-				else {
-					dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
-				}
+				v[p.second * 2] = p.first;
+				pq.push(std::make_pair(p.first, p.second * 2));
 			}
 		}
-		cout << dp[s1.size()][s2.size()];
+		if (v[p.second + 1] > p.first + 1) {
+			if (p.second + 1 == K) {
+				v[p.second + 1] = p.first + 1;
+				break;
+			}
+			v[p.second + 1] = p.first + 1;
+			pq.push(std::make_pair(p.first + 1, p.second + 1));
+		}
+		if (p.second - 1 > 0) {
+			if (v[p.second - 1] > p.first + 1) {
+				if (p.second - 1 == K) {
+					v[p.second - 1] = p.first + 1;
+					break;
+				}
+				v[p.second - 1] = p.first + 1;
+				pq.push(std::make_pair(p.first + 1, p.second - 1));
+			}
+		}
 	}
+	std::cout << v[K] - 1;
 }
