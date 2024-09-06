@@ -1,7 +1,7 @@
 #include <iostream>
-#include <queue>
-#include <map>
+#include <vector>
 
+using namespace std;
 
 int main()
 {
@@ -10,50 +10,28 @@ int main()
 	std::cout.tie(NULL);
 
 	int N, K;
-	std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> pq;
-	std::vector<int> v(200'002, 100'001);
-	std::cin >> N >> K;
-	pq.push(std::make_pair(1, N));
-	
-	if (N >= K) {
-		std::cout << N - K;
-		return 0;
+	cin >> N >> K;
+
+	vector<vector<long long>> v(N, vector<long long>(K + 1, 0));
+
+	int W, V;
+	cin >> W >> V;
+
+	for (int i = W; i < K + 1; ++i) {
+		v[0][i] = V;
 	}
-	while (!pq.empty()) {
-		std::pair<int, int> p = pq.top();
-		pq.pop();
-		if (p.second > K) {
-			v[K] = std::min(v[K], p.first + p.second - K);
-			continue;
+
+	for (int i = 1; i < N; ++i) {
+		cin >> W >> V;
+		for (int j = 0; j < K+1; ++j) {
+			v[i][j] = v[i - 1][j];
 		}
-		if (p.second * 2 <= K + 50000) {
-			if (v[p.second * 2] > p.first) {
-				if (p.second * 2 == K) {
-					v[p.second * 2] = p.first;
-					break;
-				}
-				v[p.second * 2] = p.first;
-				pq.push(std::make_pair(p.first, p.second * 2));
-			}
-		}
-		if (v[p.second + 1] > p.first + 1) {
-			if (p.second + 1 == K) {
-				v[p.second + 1] = p.first + 1;
-				break;
-			}
-			v[p.second + 1] = p.first + 1;
-			pq.push(std::make_pair(p.first + 1, p.second + 1));
-		}
-		if (p.second - 1 > 0) {
-			if (v[p.second - 1] > p.first + 1) {
-				if (p.second - 1 == K) {
-					v[p.second - 1] = p.first + 1;
-					break;
-				}
-				v[p.second - 1] = p.first + 1;
-				pq.push(std::make_pair(p.first + 1, p.second - 1));
+		for (int j = 0; j + W < K + 1; ++j) {
+			if (v[i-1][j + W] < v[i - 1][j] + V) {
+				v[i][j + W] = v[i - 1][j] + V;
 			}
 		}
 	}
-	std::cout << v[K] - 1;
-}
+	cout << v[N-1][K];
+}	
+ 
