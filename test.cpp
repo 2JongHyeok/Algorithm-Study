@@ -3,35 +3,67 @@
 
 using namespace std;
 
+int N, M;
+vector<pair<int, int>> chicken;
+vector<pair<int, int>> houses;
+int Distance[100][2500];
+int MinDistance[14][2500];
+long long answer = 1e9;
+void FIND(int my, int num) {
+	if (num == M - 1) {
+		long long pre_answer = 0;
+		for (int i = 0; i < houses.size(); ++i) {
+			pre_answer += min(Distance[my][i], MinDistance[num][i]);
+		}
+		if (answer > pre_answer)
+			answer = pre_answer;
+		return;
+	}
+	if (num < M - 1) {
+		for (int i = 0; i < houses.size(); ++i) {
+			MinDistance[num + 1][i] = min(MinDistance[num][i], Distance[my][i]);
+		}
+		for (int i = my + 1; i < chicken.size(); ++i) {
+			FIND(i, num + 1);
+		}
+	}
+}
+
+void FIND_DISTANCE(int my) {
+	for (int i = 0; i < houses.size(); ++i) {
+		Distance[my][i] = abs(chicken[my].first - houses[i].first) + abs(chicken[my].second - houses[i].second);
+	}
+}
+
 int main()
 {
 	std::ios::sync_with_stdio(false);
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
-
-	int N, K;
-	cin >> N >> K;
-
-	vector<vector<long long>> v(N, vector<long long>(K + 1, 0));
-
-	int W, V;
-	cin >> W >> V;
-
-	for (int i = W; i < K + 1; ++i) {
-		v[0][i] = V;
-	}
-
-	for (int i = 1; i < N; ++i) {
-		cin >> W >> V;
-		for (int j = 0; j < K+1; ++j) {
-			v[i][j] = v[i - 1][j];
-		}
-		for (int j = 0; j + W < K + 1; ++j) {
-			if (v[i-1][j + W] < v[i - 1][j] + V) {
-				v[i][j + W] = v[i - 1][j] + V;
+	
+	cin >> N >> M;
+	int number;
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			cin >> number;
+			if (number == 1) {
+				houses.emplace_back(make_pair(i, j));	
+			}
+			else if (number == 2) {
+				chicken.emplace_back(make_pair(i, j));
 			}
 		}
 	}
-	cout << v[N-1][K];
+	for (int i = 0; i < 2500; ++i) {
+		MinDistance[0][i] = int(1e9);
+	}
+	for (int i = 0; i < chicken.size(); ++i) {
+		FIND_DISTANCE(i);
+	}
+
+	for (int i = 0; i <= chicken.size()-M; ++i) {
+		FIND(i, 0);
+	}
+	cout << answer;
 }	
  
