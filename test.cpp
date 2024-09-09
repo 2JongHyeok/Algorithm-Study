@@ -1,5 +1,5 @@
 #include <iostream>
-#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -11,27 +11,33 @@ int main()
 	
 	int N;
 	cin >> N;
-
-	long long answer = 1;
-	for (int i = 1; i <= N; ++i) {
-		answer *= i;
-		while (true) {
-			if (answer % 10 == 0) {
-				answer /= 10;
+	int num;
+	vector<vector<vector<int>>> dp(N, vector<vector<int>>(N, vector<int>(N, 0)));
+	vector<vector<int>> house(N, vector<int>(N,0));
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			cin >> house[i][j];
+		}
+	}
+	dp[0][0][0] = 1;
+	dp[0][1][0] = 1;
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			if (j > 1) {
+				if (house[i][j] == 0) {
+					dp[i][j][0] = dp[i][j - 1][0] + dp[i][j-1][1];
+				}
+				if (i > 0) {
+					if (house[i][j] == 0 && house[i - 1][j] == 0 && house[i][j - 1] == 0) {
+						dp[i][j][1] += (dp[i - 1][j - 1][0]+dp[i-1][j-1][1] + dp[i-1][j-1][2]);
+					}
+					if (house[i][j] == 0 && i>1) {
+						dp[i][j][2] += (dp[i - 1][j][1] + dp[i-1][j][2]);
+					}
+				}
 			}
-			else
-				break;
 		}
-		answer %= 1'000'000'000'000;
 	}
-	string s = to_string(answer);
-	if (s.size() > 5) {
-		string new_s = "";
-		for (int i = s.size() - 5; i < s.size(); ++i) {
-			new_s += s[i];
-		}
-		s = new_s;
-	}
-	cout << s;
+	cout << dp[N - 1][N - 1][0] + dp[N - 1][N - 1][1]+ dp[N - 1][N - 1][2];
 }	
  
