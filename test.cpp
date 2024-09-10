@@ -2,6 +2,25 @@
 #include <vector>
 
 using namespace std;
+vector<int> parent(51,0);
+vector<vector<int>> party(50, vector<int>());
+
+int Find(int num) {
+	if (num != parent[num])
+		parent[num] = Find(parent[num]);
+	return parent[num];
+}
+
+void Union(int a, int b) {
+	a = Find(a);
+	b = Find(b);
+
+	if (a < b)
+		parent[b] = a;
+	else {
+		parent[a] = b;
+	}
+}
 
 int main()
 {
@@ -9,35 +28,35 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	
-	int N;
-	cin >> N;
-	int num;
-	vector<vector<vector<int>>> dp(N, vector<vector<int>>(N, vector<int>(N, 0)));
-	vector<vector<int>> house(N, vector<int>(N,0));
-	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) {
-			cin >> house[i][j];
-		}
+	int N, M;
+	cin >> N >> M;
+	for (int i = 0; i <= N; ++i) {
+		parent[i] = i;
 	}
-	dp[0][0][0] = 1;
-	dp[0][1][0] = 1;
-	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) {
-			if (j > 1) {
-				if (house[i][j] == 0) {
-					dp[i][j][0] = dp[i][j - 1][0] + dp[i][j-1][1];
-				}
-				if (i > 0) {
-					if (house[i][j] == 0 && house[i - 1][j] == 0 && house[i][j - 1] == 0) {
-						dp[i][j][1] += (dp[i - 1][j - 1][0]+dp[i-1][j-1][1] + dp[i-1][j-1][2]);
-					}
-					if (house[i][j] == 0 && i>1) {
-						dp[i][j][2] += (dp[i - 1][j][1] + dp[i-1][j][2]);
-					}
-				}
+	int knowTruth;
+	cin >> knowTruth;
+	for (int i = 0; i < knowTruth; ++i) {
+		int num;
+		cin >> num;
+		parent[num] = 0;
+	}
+
+	for (int i = 0; i < M; ++i) {
+		int num;
+		cin >> num;
+		for (int j = 0; j < num; ++j) {
+			int people;
+			cin >> people;
+			party[i].emplace_back(people);
+			if (j != 0) {
+				Union(party[i][j], party[i][j-1]);
 			}
 		}
 	}
-	cout << dp[N - 1][N - 1][0] + dp[N - 1][N - 1][1]+ dp[N - 1][N - 1][2];
+	int count = 0;
+	for (int i = 0; i < M; ++i) {
+		if (Find(party[i][0]) != 0)count++;
+	}
+	cout << count;
 }	
  
