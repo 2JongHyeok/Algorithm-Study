@@ -13,7 +13,7 @@ int main()
 		int a, b;
 		cin >> a >> b;
 		if (a == 0 && b == 0) break;
-		if (a <= b ? cout << "No" : cout << "Yes");
+		if (a <= b ? cout << "No\n" : cout << "Yes\n");
 	}
 }	
  
