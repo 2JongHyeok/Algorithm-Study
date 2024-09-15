@@ -9,18 +9,11 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 
-	int num = 1;
-	int count = 0;
-	for (int i = 1; i <= 1000; ++i) {
-		DP[i] = DP[i-1] + num;
-		count++;
-		if (num == count) {
-			num++;
-			count = 0;
-		}
+	while (true) {
+		int a, b;
+		cin >> a >> b;
+		if (a == 0 && b == 0) break;
+		if (a <= b ? cout << "No" : cout << "Yes");
 	}
-	int start, end;
-	cin >> start >> end;
-	cout << DP[end] - DP[start - 1];
 }	
  
