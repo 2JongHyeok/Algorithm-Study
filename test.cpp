@@ -1,7 +1,7 @@
 #include <iostream>
+#include <string>
 
 using namespace std;
-long long DP[1001];
 
 int main()
 {
@@ -9,11 +9,7 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 
-	while (true) {
-		int a, b;
-		cin >> a >> b;
-		if (a == 0 && b == 0) break;
-		if (a <= b ? cout << "No\n" : cout << "Yes\n");
-	}
+	string s1, s2;
+	cin >> s1 >> s2;
+	if (s1.size() >= s2.size() ? cout << "go" : cout << "no");
 }	
- 
