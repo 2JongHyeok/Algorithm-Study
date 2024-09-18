@@ -1,26 +1,30 @@
 #include <iostream>
 #include <vector>
+#include <map>
 
 using namespace std;
-vector<vector<pair<int, int>>> v(10001, vector<pair<int, int>>());
-int max_distance, farthest_node;
 
-void DFS(int start, int parent, int distance) {
-	if (max_distance < distance) {
-		max_distance = distance;
-		farthest_node = start;
-	}
-	for (auto c : v[start]) {
-		if (c.first == parent) continue;
-		DFS(c.first, start, distance + c.second);
-	}
-}
+vector<vector<char>> v(20, vector<char>(20, 'a'));
+map<char, bool> m;
+int max_count = 0;
+int X[4]{ 0,0,1,-1 };
+int Y[4]{ 1,-1,0,0};
+int R, C;
 
-void Find(int start) {
-	DFS(start, -1, 0);
-	int start_node = farthest_node;
-	max_distance = 0;
-	DFS(start_node, -1, 0);
+void DFS(pair<int,int> pos, int count) {
+	if (max_count < count) {
+		max_count = count;
+	}
+
+	for (int i = 0; i < 4; ++i) {
+		int new_x = pos.second + X[i];
+		int new_y = pos.first + Y[i];
+		if (new_y < 0 || new_y > R - 1 || new_x < 0 || new_x > C - 1) continue;
+		if (m[v[new_y][new_x]]) continue;
+		m[v[new_y][new_x]] = true;
+		DFS(make_pair(new_y, new_x), count + 1);
+		m[v[new_y][new_x]] = false;
+	}
 }
 
 int main()
@@ -29,14 +33,15 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 
-	int N;
-	cin >> N;
-	for (int i = 0; i < N - 1; ++i) {
-		int start, end, weight;
-		cin >> start >> end >> weight;
-		v[start].emplace_back(make_pair(end, weight));
-		v[end].emplace_back(make_pair(start, weight));
+
+
+	cin >> R >> C;
+	for (int i = 0; i < R; ++i) {
+		for (int j = 0; j < C; ++j) {
+			cin >> v[i][j];
+		}
 	}
-	Find(1);
-	cout << max_distance;
+	m[v[0][0]] = true;
+	DFS(make_pair(0, 0), 1);
+	cout << max_count;
 }
