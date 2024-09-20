@@ -8,11 +8,17 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	
-	long long n = 0;
-	for (int i = 0; i < 5; ++i) {
-		long long num;
-		cin >> num;
-		n += num;
+	int n;
+
+	while (true) {
+		cin >> n;
+		if (n == 0)
+			break;
+		
+		long long answer = 0;
+		for (int i = 1; i <= n; ++i) {
+			answer += i;
+		}
+		cout << answer<<"\n";
 	}
-	cout << n;
 }
