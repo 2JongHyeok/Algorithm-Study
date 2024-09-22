@@ -8,17 +8,26 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	
-	int n;
-
-	while (true) {
-		cin >> n;
-		if (n == 0)
-			break;
-		
-		long long answer = 0;
-		for (int i = 1; i <= n; ++i) {
-			answer += i;
+	int a, b, c;
+	cin >> a >> b >> c;
+	if (a < b) {
+		if (b < c)
+			cout << b;
+		else {
+			if (a < c)
+				cout << c;
+			else
+				cout << a;
 		}
-		cout << answer<<"\n";
+	}
+	else {
+		if (a < c)
+			cout << a;
+		else {
+			if (b < c)
+				cout << c;
+			else
+				cout << b;
+		}
 	}
 }
