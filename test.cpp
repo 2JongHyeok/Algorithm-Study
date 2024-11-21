@@ -1,34 +1,8 @@
 #include <iostream>
-#include <vector>
+#include <stack>
+#include <string>
 
 using namespace std;
-int col[15];
-int total = 0;
-int N;
-
-bool check(int n)
-{
-	for (int i = 0; i < n; ++i) {
-		if (col[i] == col[n] || abs(col[n] - col[i]) == n - i) {
-			return false;
-		}
-	}
-	return true;
-}
-
-void Find(int count)
-{
-	if (count == N) {
-		total++;
-		return;
-	}
-	for (int i = 0; i < N; ++i) {
-		col[count] = i;
-		if (check(count)) {
-			Find(count + 1);
-		}
-	}
-}
 
 int main()
 {
@@ -36,8 +10,15 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	
-	cin >> N;
+	string s;
+	string bomb;
+	cin >> s >> bomb;
+	int now = bomb.size()-1;
+	for (int i = 0; i < s.length(); ++i) {
+		if (s[i] == bomb[now]) {
 
-	Find(0);
-	cout << total;
+		}
+	}
+
+	stack<char> st;
 }
