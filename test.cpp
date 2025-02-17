@@ -14,7 +14,7 @@ int main()
 	cin >> subin >> sister;
 
 	if (subin == sister) {
-		cout << "0\n0";
+		cout << "0\n1";
 		return 0;
 	}
 
