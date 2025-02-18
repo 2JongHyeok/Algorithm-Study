@@ -1,8 +1,19 @@
 #include <iostream>
-#include <queue>
 
 using namespace std;
-bool visited[100'001]{ false };
+
+long long MOD = 1'000'000'007;
+
+long long cal(long long a, long long b) {
+	if (b == 1) return a;
+	long long val = cal(a, b/2);
+	if (b % 2 == 0) {
+		return (val * val)%MOD;
+	}
+	else {
+		return ((val * val)%MOD * a) % MOD;
+	}
+}
 
 int main()
 {
@@ -10,72 +21,16 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 
-	int subin, sister;
-	cin >> subin >> sister;
+	int M;
+	cin >> M;
+	
+	long long answer = 0;
 
-	if (subin == sister) {
-		cout << "0\n1";
-		return 0;
+	for (int i = 0; i < M; ++i) {
+		int N, S;
+		cin >> N >> S;
+		answer += (cal(N, MOD - 2) * S) % MOD;
+		answer %= MOD;
 	}
-
-	queue<pair<int,int>> q;
-	int found_time = -1;
-	int count = 0;
-
-	q.push(make_pair(0, subin));
-	visited[subin] = true;
-
-	priority_queue<int> update_pos;
-	int last_time = 0;
-	while (!q.empty()) {
-		int now_time = q.front().first;
-		int now_pos = q.front().second;
-		q.pop();
-		if (now_time == found_time) break;
-		if (last_time != now_time) {
-			while (!update_pos.empty()) {
-				visited[update_pos.top()] = true;
-				update_pos.pop();
-			}
-			last_time = now_time;
-		}
-		if (now_pos + 1 == sister) {
-			found_time = now_time + 1;
-			count++;
-		}
-		else {
-			if (now_pos < sister) {
-				if (!visited[now_pos + 1]) {
-					q.push(make_pair(now_time + 1, now_pos + 1));
-					update_pos.push(now_pos + 1);
-				}
-			}
-		}
-		if (now_pos - 1 == sister) {
-			found_time = now_time + 1;
-			count++;
-		}
-		else {
-			if (now_pos > 0) {
-				if (!visited[now_pos -1]) {
-					q.push(make_pair(now_time + 1, now_pos - 1));
-					update_pos.push(now_pos - 1);
-				}
-			}
-		}
-		if (now_pos *2 == sister) {
-			found_time = now_time + 1;
-			count++;
-		}
-		else {
-			if (now_pos * 2 < 100000) {
-				if (!visited[now_pos * 2]) {
-					q.push(make_pair(now_time + 1, now_pos * 2));
-					update_pos.push(now_pos * 2);
-				}
-			}
-		}
-	}
-
-	cout << found_time << "\n" << count;
+	cout << answer;
 }
