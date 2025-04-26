@@ -1,35 +1,14 @@
 #include <iostream>
 #include <vector>
+#include <queue>
 #include <tuple>
-#include <limits>
+#include <string>
 
 using namespace std;
-constexpr int INF = numeric_limits<int>::max();
 
-int N, M, W;
+int N, M;
 
-bool bellman_ford(const vector<tuple<int,int,int>>& edges)
-{
-	vector<int> dist(N + 1, INF);
-
-	dist[0] = 0;
-	
-	for (int i = 0; i < N; ++i) {
-		for (auto [u, v, w] : edges) {
-			if (dist[u] != INF && dist[v] > dist[u] + w) {
-				dist[v] = dist[u] + w;
-			}
-		}
-	}
-
-	for (auto [u, v, w] : edges) {
-		if (dist[u] != INF && dist[v] > dist[u] + w) {
-			return true;
-		}
-	}
-	return false;
-
-}
+bool visited[1000][1000][2];	// 방문여부 + 벽을 부쉈는지 안부쉈는지
 
 int main()
 {
@@ -37,32 +16,64 @@ int main()
 	std::cin.tie(NULL);
 	std::cout.tie(NULL);
 	
-	int TC;
-	cin >> TC;
+	cin >> N >> M;
+	vector<vector<char>> map(N, vector<char>(M, 0));
 
-	for (int tc = 0; tc < TC; ++tc) {
-		cin >> N >> M >> W;
-		vector<tuple<int, int, int>> edges;
-		for (int i = 0; i < M; ++i) {
-			int u, v, w;
-			cin >> u >> v >> w;
-			edges.emplace_back( u,v,w );
-			edges.emplace_back( v,u,w );
+
+	for (int i = 0; i < N; ++i) {
+		string s;
+		cin >> s;
+		for (int j = 0; j < M; ++j) {
+			map[i][j] = s[j];
 		}
-		for (int i = 0; i < W; ++i) {
-			int u, v, w;
-			cin >> u >> v >> w;
-			edges.emplace_back(u, v, -w);
+	}
+
+	if (N == 1 && M == 1) {
+		cout << 1;
+		return 0;
+	}
+	queue <tuple<int, int, int, bool>> q;
+
+	q.push({ 1,0, 0, false });
+	
+	int X[4]{ 1,0,0,-1 };
+	int Y[4]{ 0,1,-1,0 };
+	bool found = false;
+	while (!q.empty()) {
+		auto [time, x, y, broken] = q.front(); q.pop();
+		for (int i = 0; i < 4; ++i) {
+			int newX = x + X[i], newY = y+Y[i];
+			if (newX < 0 || newX >= M || newY < 0 || newY >= N) continue;
+			if (newX == M - 1 && newY == N - 1) {
+				found = true;
+				cout << time + 1;
+				break;
+			}
+			if (broken) {
+				if (map[newY][newX] == '1') continue;
+				if (visited[newY][newX][0]) continue;
+				visited[newY][newX][0] = true;
+				visited[newY][newX][1] = true;
+				q.push({ time + 1, newX, newY, broken });
+			}
+			else {
+				if (visited[newY][newX][0] && !visited[newY][newX][1]) continue;
+				if (map[newY][newX] == '1') {
+					q.push({ time + 1, newX, newY, true });
+					
+				}
+				else {
+					q.push({ time + 1, newX, newY, false });
+				}
+				visited[newY][newX][0] = true;
+				visited[newY][newX][1] = false;
+			}
 		}
-		for (int i = 1; i <= N; ++i) {
-			edges.emplace_back(0, i, 0);
-		}
-		if (bellman_ford(edges)) {
-			cout << "YES\n";
-		}
-		else {
-			cout << "NO\n";
-		}
+		if (found)
+			break;
+	}
+	if (!found) {
+		cout << -1;
 	}
 
 	return 0;
